@@ -1,0 +1,33 @@
+{
+  "name": "deja-vu",
+  "version": "0.0.0",
+  "description": "Filters out duplicitous event receipts"
+  "main": "index.js",
+  "scripts": {
+    "test": "jasmine"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mixmaxhq/deja-vu.git"
+  },
+  "keywords": [
+    "redis",
+    "de-dupe",
+    "filter",
+    "event",
+    "receipt",
+    "duplicate"
+  ],
+  "author": "Trey Tacon <trey@mixmax.com> (https://mixmax.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mixmaxhq/deja-vu/issues"
+  },
+  "homepage": "https://github.com/mixmaxhq/deja-vu#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "jasmine": "2.5.2",
+    "redis": "2.6.3",
+    "underscore": "^1.8.3"
+  }
+}

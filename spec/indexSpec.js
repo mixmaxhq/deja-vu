@@ -18,7 +18,7 @@ describe('DejaVu', () => {
       timestampFn: () => {},
       idFn: () => {},
       valFn: () => {},
-      window: 60 * 60 * 1000 // one hour window
+      timeLimit: 60 * 60 * 1000 // one hour timeLimit
     };
     
     it('should be able to register a handler', () => {
@@ -51,15 +51,15 @@ describe('DejaVu', () => {
     it('should throw if the handler is missing the valFn property', () => {
       let dv = new DejaVu({redisConnection: 'yolo'});
       expect(() => {
-        dv.registerHandler('type0', _.omit(_.clone(handlerProto), 'valFn', 'window'));
+        dv.registerHandler('type0', _.omit(_.clone(handlerProto), 'valFn', 'timeLimit'));
       }).toThrowError(/Handler must specify a valFn./);
     });
 
-    it('should throw if the handler is missing the window property', () => {
+    it('should throw if the handler is missing the timeLimit property', () => {
       let dv = new DejaVu({redisConnection: 'yolo'});
       expect(() => {
-        dv.registerHandler('type0', _.omit(_.clone(handlerProto), 'window'));
-      }).toThrowError(/Handler must specify a window./);
+        dv.registerHandler('type0', _.omit(_.clone(handlerProto), 'timeLimit'));
+      }).toThrowError(/Handler must specify a timeLimit./);
     });
 
     it('should throw if we try to register mutliple handlers for the same type', () => {
@@ -81,7 +81,7 @@ describe('DejaVu', () => {
       timestampFn: (eve) => eve.timestamp,
       idFn: (eve) => eve._id,
       valFn: (eve) => eve.val,
-      window: 60 * 60 * 1000 // one hour window
+      timeLimit: 60 * 60 * 1000 // one hour timeLimit
     };
 
     const redisConnection = redis.createClient('redis://localhost:6379', { db: 1 });
@@ -91,8 +91,8 @@ describe('DejaVu', () => {
     beforeEach((done) => {
       redisConnection.flushdb(done);
     });
-    
-    it('should ignore events outside the desired window', (done) => {
+
+    it('should ignore events outside the desired timeLimit', (done) => {
       const eve = {
         _id: 'yolo1',
         timestamp: Date.now(),

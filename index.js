@@ -18,17 +18,17 @@ class DejaVu {
   /**
    * isNew returns if an event is new or not.
    * @param {String} prefix The prefix to namespace events under.
-   * @param {Number} window The window to filtet event timestamps by (in ms).
+   * @param {Number} timeLimit The timeLimit to filtet event timestamps by (in ms).
    * @param {Function} timestampFn A function for extracting an event's timestamp.
    * @param {Function} idFn A function for extracting an event's ID.
    * @param {Object} eve The event of interest.
    * @param {Function} done Node style callback.
    */
-  _isNew(prefix, window, timestampFn, idFn, eve, done) {
+  _isNew(prefix, timeLimit, timestampFn, idFn, eve, done) {
     const now = Date.now();
     const occurredAt = timestampFn(eve);
     if (!occurredAt) return done(null, false);
-    if (now - occurredAt > window) return done(null, false);
+    if (now - occurredAt > timeLimit) return done(null, false);
 
     const eventId = idFn(eve);
     // Safety belts.
@@ -68,7 +68,7 @@ class DejaVu {
    * @property {Function} idFn A function for extracting an event's ID.
    * @property {Function} valFn A function for extracting the value to store
    *    for an event in Redis.
-   * @property {Number} window The number of milliseconds before now, within
+   * @property {Number} timeLimit The number of milliseconds before now, within
    *    which we should consider events.
    * @property {Number} ttl How long an event should remain in Redis before
    *    expiring.
@@ -88,11 +88,11 @@ class DejaVu {
     assert(handler.timestampFn, 'Handler must specify a timestampFn.');
     assert(handler.idFn, 'Handler must specify an idFn.');
     assert(handler.valFn, 'Handler must specify a valFn.');
-    assert(handler.window, 'Handler must specify a window.');
-    
+    assert(handler.timeLimit, 'Handler must specify a timeLimit.');
+
     // Be nice, if the user didn't specify the ttl on the handler, set it for
-    // them from the window.
-    if (!handler.ttl) handler.ttl = Math.floor(handler.window / 1000);
+    // them from the timeLimit.
+    if (!handler.ttl) handler.ttl = Math.floor(handler.timeLimit / 1000);
 
     this._handlers[type] = handler;
   }
@@ -100,7 +100,7 @@ class DejaVu {
   /**
    * Checks if this is the first time we've seen an event of the given type. If
    * it is, we mark the event as seen and return true, otherwise we return
-   * false. If the event occurred outside our window of consideration, we also
+   * false. If the event occurred outside our timeLimit of consideration, we also
    * return false.
    * @param {String} type The type of the event that we're inspecting.
    * @param {Object} eve The event we're inspecting.
@@ -110,8 +110,8 @@ class DejaVu {
     const handler = this._handlers[type];
     if (!handler) throw new Error('no such handler for the given event type');
 
-    const { prefix, timestampFn, idFn, valFn, window, ttl } = handler;
-    this._isNew(prefix, window, timestampFn, idFn, eve, (err, isNew) => {
+    const { prefix, timestampFn, idFn, valFn, timeLimit, ttl } = handler;
+    this._isNew(prefix, timeLimit, timestampFn, idFn, eve, (err, isNew) => {
       if (err) return done(err);
 
       if (!isNew) return done(null, false);

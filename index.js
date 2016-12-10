@@ -24,7 +24,7 @@ class DejaVu {
    * @param {Object} eve The event of interest.
    * @param {Function} done Node style callback.
    */
-  isNew(prefix, window, timestampFn, idFn, eve, done) {
+  _isNew(prefix, window, timestampFn, idFn, eve, done) {
     const now = Date.now();
     const occurredAt = timestampFn(eve);
     if (!occurredAt) return done(null, false);
@@ -52,7 +52,7 @@ class DejaVu {
    * @property {Object} eve The event to mark as seen.
    * @property {Function} done Node style callback.
    */
-  markAsSeen(prefix, ttl, idFn, valFn, eve, done) {
+  _markAsSeen(prefix, ttl, idFn, valFn, eve, done) {
     const eventId = idFn(eve);
     // Safety belts.
     if (!eventId) return done();
@@ -111,11 +111,11 @@ class DejaVu {
     if (!handler) throw new Error('no such handler for the given event type');
 
     const { prefix, timestampFn, idFn, valFn, window, ttl } = handler;
-    this.isNew(prefix, window, timestampFn, idFn, eve, (err, isNew) => {
+    this._isNew(prefix, window, timestampFn, idFn, eve, (err, isNew) => {
       if (err) return done(err);
 
       if (!isNew) return done(null, false);
-      return this.markAsSeen(prefix, ttl, idFn, valFn, eve, (err) => {
+      return this._markAsSeen(prefix, ttl, idFn, valFn, eve, (err) => {
         if (err) return done(err);
         return done(null, true);
       });

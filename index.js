@@ -114,7 +114,7 @@ class DejaVu {
     this.isNew(prefix, window, timestampFn, idFn, eve, (err, isNew) => {
       if (err) return done(err);
 
-      if (!isNew) done(null, false);
+      if (!isNew) return done(null, false);
       return this.markAsSeen(prefix, ttl, idFn, valFn, eve, (err) => {
         if (err) return done(err);
         return done(null, true);

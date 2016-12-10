@@ -34,7 +34,7 @@ class DejaVu {
     // Safety belts.
     if (!eventId) return done(null, false);
 
-    return this._redisConnection.exists(`${prefix}:${eventId}`, (err, val) => {
+    this._redisConnection.exists(`${prefix}:${eventId}`, (err, val) => {
       if (err) return done(err);
       return done(null, val === 0);
     });
@@ -57,7 +57,7 @@ class DejaVu {
     // Safety belts.
     if (!eventId) return done();
 
-    return this._redisConnection.setex(`${prefix}:${eventId}`, ttl, valFn(eve), done);
+    this._redisConnection.setex(`${prefix}:${eventId}`, ttl, valFn(eve), done);
   }
 
   /**

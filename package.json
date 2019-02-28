@@ -1,6 +1,6 @@
 {
   "name": "deja-vu",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Filters out duplicitous event receipts",
   "main": "index.js",
   "scripts": {

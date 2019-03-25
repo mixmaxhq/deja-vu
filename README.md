@@ -24,11 +24,11 @@ deja-vu will handle ignoring duplicate events. The one other thing that
 deja-vu relies on is a connection to a Redis deployment.
 
 ```js
-var DejaVu = require('deja-vu');
-var redis = require('redis');
+const DejaVu = require('deja-vu');
+const redis = require('redis');
 
-var deja = new DejaVu({
-    redisConnection: redis.createClient(process.env.REDIS_LOCATION)
+const deja = new DejaVu({
+  redisConnection: redis.createClient(process.env.REDIS_LOCATION)
 });
 ```
 
@@ -54,13 +54,18 @@ After you've told deja-vu how to interact with your events, we can unleash
 it on the world! It's extremely simple to use:
 
 ```js
-const firstDate = deja.inspectEvent('warmFuzzies', {
+deja.inspectEvent('warmFuzzies', {
   _id: 'oldFlame',
   timestamp: 1401587522000, // Oh so long ago..
   val: 'our tires were slashed'
-}, (err, val) => {
-   if (err) console.log(`womp womp, failed to check your event`;
-   console.log('this is the first time we've seen this event: ' + val);
+}).then((seen) => {
+  if (seen) {
+    console.log('this is the first time we\'ve seen this event.');
+  } else {
+    console.log('we\'ve seen this event in within the time limit.');
+  }
+}).catch((err) => {
+  console.log('womp womp, failed to check your event: ' + err);
 });
 
 ```

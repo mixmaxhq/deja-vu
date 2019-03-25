@@ -4,7 +4,8 @@
   "description": "Filters out duplicitous event receipts",
   "main": "index.js",
   "scripts": {
-    "test": "jasmine"
+    "test": "jasmine",
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
@@ -24,8 +25,12 @@
     "url": "https://github.com/mixmaxhq/deja-vu/issues"
   },
   "homepage": "https://github.com/mixmaxhq/deja-vu#readme",
-  "dependencies": {},
+  "dependencies": {
+    "promise-callbacks": "^3.2.2"
+  },
   "devDependencies": {
+    "eslint": "^5.15.3",
+    "eslint-config-mixmax": "^2.0.0",
     "jasmine": "2.5.2",
     "redis": "2.6.3",
     "underscore": "^1.8.3"

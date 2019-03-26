@@ -1,6 +1,5 @@
-'use strict';
-
 const assert = require('assert');
+const { deferred } = require('promise-callbacks');
 
 class DejaVu {
 
@@ -22,22 +21,21 @@ class DejaVu {
    * @param {Function} timestampFn A function for extracting an event's timestamp.
    * @param {Function} idFn A function for extracting an event's ID.
    * @param {Object} eve The event of interest.
-   * @param {Function} done Node style callback.
    */
-  _isNew(prefix, timeLimit, timestampFn, idFn, eve, done) {
+  async _isNew(prefix, timeLimit, timestampFn, idFn, eve) {
     const now = Date.now();
     const occurredAt = timestampFn(eve);
-    if (!occurredAt) return done(null, false);
-    if (now - occurredAt > timeLimit) return done(null, false);
+    if (!occurredAt) return false;
+    if (now - occurredAt > timeLimit) return false;
 
     const eventId = idFn(eve);
     // Safety belts.
-    if (!eventId) return done(null, false);
+    if (!eventId) return false;
 
-    this._redisConnection.exists(`${prefix}:${eventId}`, (err, val) => {
-      if (err) return done(err);
-      return done(null, val === 0);
-    });
+    const promise = deferred();
+    this._redisConnection.exists(`${prefix}:${eventId}`, promise.defer());
+    const val = await promise;
+    return val === 0;
   }
 
   /**
@@ -50,14 +48,15 @@ class DejaVu {
    * @property {Function} valFn A function for extracting the value to store
    *    for an event in Redis.
    * @property {Object} eve The event to mark as seen.
-   * @property {Function} done Node style callback.
    */
-  _markAsSeen(prefix, ttl, idFn, valFn, eve, done) {
+  async _markAsSeen(prefix, ttl, idFn, valFn, eve) {
     const eventId = idFn(eve);
     // Safety belts.
-    if (!eventId) return done();
+    if (!eventId) return;
 
-    this._redisConnection.setex(`${prefix}:${eventId}`, ttl, valFn(eve), done);
+    const promise = deferred();
+    this._redisConnection.setex(`${prefix}:${eventId}`, ttl, valFn(eve), promise.defer());
+    return promise;
   }
 
   /**
@@ -104,22 +103,16 @@ class DejaVu {
    * return false.
    * @param {String} type The type of the event that we're inspecting.
    * @param {Object} eve The event we're inspecting.
-   * @param {Function} done Node style callback.
    */
-  inspectEvent(type, eve, done) {
+  async inspectEvent(type, eve) {
     const handler = this._handlers[type];
     if (!handler) throw new Error('no such handler for the given event type');
 
     const { prefix, timestampFn, idFn, valFn, timeLimit, ttl } = handler;
-    this._isNew(prefix, timeLimit, timestampFn, idFn, eve, (err, isNew) => {
-      if (err) return done(err);
-
-      if (!isNew) return done(null, false);
-      return this._markAsSeen(prefix, ttl, idFn, valFn, eve, (err) => {
-        if (err) return done(err);
-        return done(null, true);
-      });
-    });
+    const isNew = await this._isNew(prefix, timeLimit, timestampFn, idFn, eve);
+    if (!isNew) return false;
+    await this._markAsSeen(prefix, ttl, idFn, valFn, eve);
+    return true;
   }
 }
 

@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { deferred } = require('promise-callbacks');
+const { deferred } = require('promise-callbacks');
 
 class DejaVu {
 

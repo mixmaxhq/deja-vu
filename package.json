@@ -27,12 +27,14 @@
   },
   "homepage": "https://github.com/mixmaxhq/deja-vu#readme",
   "dependencies": {
-    "promise-callbacks": "^3.2.2"
+    "promise-callbacks": "^3.3.1"
   },
   "devDependencies": {
-    "eslint": "^5.15.3",
-    "eslint-config-mixmax": "^2.0.0",
+    "@mixmaxhq/prettier-config": "^1.0.0",
+    "eslint": "^6.8.0",
+    "eslint-config-mixmax": "^4.5.0",
     "jasmine": "2.5.2",
+    "prettier": "^1.19.1",
     "redis": "2.6.3",
     "underscore": "^1.8.3"
   }

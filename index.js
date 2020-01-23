@@ -2,7 +2,6 @@ const assert = require('assert');
 const { deferred } = require('promise-callbacks');
 
 class DejaVu {
-
   /**
    * Constructs an new instance of DejaVu to identify "original" events.
    * @param {Object} options The constructor options.

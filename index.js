@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { deferred } = require('promise-callbacks');
+const { callAsync } = require('promise-callbacks');
 
 class DejaVu {
   /**
@@ -31,9 +31,9 @@ class DejaVu {
     // Safety belts.
     if (!eventId) return false;
 
-    const promise = deferred();
-    this._redisConnection.exists(`${prefix}:${eventId}`, promise.defer());
-    const val = await promise;
+    const val = await callAsync((done) =>
+      this._redisConnection.exists(`${prefix}:${eventId}`, done)
+    );
     return val === 0;
   }
 
@@ -50,12 +50,12 @@ class DejaVu {
    */
   async _markAsSeen(prefix, ttl, idFn, valFn, eve) {
     const eventId = idFn(eve);
-    // Safety belts.
-    if (!eventId) return;
-
-    const promise = deferred();
-    this._redisConnection.setex(`${prefix}:${eventId}`, ttl, valFn(eve), promise.defer());
-    return promise;
+    return eventId
+      ? callAsync((done) =>
+          this._redisConnection.setex(`${prefix}:${eventId}`, ttl, valFn(eve), done)
+        )
+      : // Safety belts.
+        undefined;
   }
 
   /**

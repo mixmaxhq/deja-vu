@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/mixmaxhq/deja-vu#readme",
   "dependencies": {
-    "promise-callbacks": "^3.2.2"
+    "promise-callbacks": "^3.3.1"
   },
   "devDependencies": {
     "@mixmaxhq/prettier-config": "^1.0.0",

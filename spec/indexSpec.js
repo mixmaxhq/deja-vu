@@ -1,4 +1,4 @@
-const _ = require('underscore');
+const _ = require('lodash');
 const DejaVu = require('..');
 const redis = require('redis');
 

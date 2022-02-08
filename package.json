@@ -34,8 +34,8 @@
     "eslint": "^6.8.0",
     "eslint-config-mixmax": "^4.5.0",
     "jasmine": "2.5.2",
+    "lodash": "^4.17.21",
     "prettier": "^1.19.1",
-    "redis": "2.6.3",
-    "underscore": "^1.8.3"
+    "redis": "2.6.3"
   }
 }
